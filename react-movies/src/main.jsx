@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Navigate, Routes, Link } from "react-router";
+import { BrowserRouter, Route, Navigate, Routes } from "react-router";
 import HomePage from "./pages/homePage";
 import MoviePage from "./pages/movieDetailsPage";
 import FavoriteMoviesPage from "./pages/favoriteMoviesPage";
@@ -17,6 +17,10 @@ import PopularMoviesPage from "./pages/popularMoviesPage";
 import NowPlayingMoviesPage from "./pages/nowPlayingPage";
 import PopularTVPage from "./pages/popularTvPage";
 import MovieDetailsExtensionPage from "./pages/moreInfoPage";
+import SignUpPage from "./pages/signUpPage";
+import LoginPage from "./pages/loginPage";
+import AuthContextProvider from "./contexts/authContext";
+import WelcomePage from "./pages/welcomePage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +35,7 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthContextProvider>
       <BrowserRouter>
         <SiteHeader />
         <MoviesContextProvider>
@@ -47,13 +52,17 @@ const App = () => {
             <Route path="/movies/popular" element={<PopularMoviesPage />} />
             <Route path="/movies/nowPlaying" element={<NowPlayingMoviesPage />} />
             <Route path="/movies/popularTv" element={<PopularTVPage />} />
-            <Route path="/" element={<HomePage />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/" element={<WelcomePage />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
           </ShowsContextProvider>
         </MoviesContextProvider>
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />
+      </AuthContextProvider>
     </QueryClientProvider>
   );
 };
