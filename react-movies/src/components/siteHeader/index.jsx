@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -11,6 +11,7 @@ import { useNavigate } from "react-router";
 import { styled } from "@mui/material/styles";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { AuthContext } from "../../contexts/authContext";
 
 const Offset = styled("div")(({ theme }) => theme.mixins.toolbar);
 
@@ -19,6 +20,7 @@ const SiteHeader = () => {
   const [anchorElMovies, setAnchorElMovies] = useState(null);
   const [anchorElTV, setAnchorElTV] = useState(null);
   const navigate = useNavigate();
+  const { isAuthenticated, signout } = useContext(AuthContext);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -26,6 +28,12 @@ const SiteHeader = () => {
   const handleMenuSelect = (path) => {
     navigate(path);
     handleCloseAll();
+  };
+
+  const handleLogout = () => {
+    signout();
+    handleCloseAll();
+    navigate('/login');
   };
 
   const handleCloseAll = () => {
@@ -50,7 +58,6 @@ const SiteHeader = () => {
             All you ever wanted to know about Movies!
           </Typography>
 
-          {/* === MOBILE MENU === */}
           {isMobile ? (
             <>
               <IconButton
@@ -68,97 +75,101 @@ const SiteHeader = () => {
                 open={Boolean(anchorElMain)}
                 onClose={handleCloseAll}
               >
-                {/* Movies section */}
-                <MenuItem onClick={handleOpenMovies}>Movies ▸</MenuItem>
-                <Menu
-                  anchorEl={anchorElMovies}
-                  open={Boolean(anchorElMovies)}
-                  onClose={handleCloseAll}
-                  anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                  transformOrigin={{ vertical: "top", horizontal: "right" }}
-                >
-                  <MenuItem onClick={() => handleMenuSelect("/")}>Home</MenuItem>
-                  <MenuItem onClick={() => handleMenuSelect("/movies/favorites")}>
-                    Favorites
-                  </MenuItem>
-                  <MenuItem onClick={() => handleMenuSelect("/movies/upcoming")}>
-                    Upcoming Movies
-                  </MenuItem>
-                  <MenuItem onClick={() => handleMenuSelect("/movies/popular")}>
-                    Popular Movies
-                  </MenuItem>
-                  <MenuItem onClick={() => handleMenuSelect("/movies/nowPlaying")}>
-                    Now Playing
-                  </MenuItem>
-                </Menu>
-
-                {/* TV section */}
-                <MenuItem onClick={handleOpenTV}>TV Shows ▸</MenuItem>
-                <Menu
-                  anchorEl={anchorElTV}
-                  open={Boolean(anchorElTV)}
-                  onClose={handleCloseAll}
-                  anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                  transformOrigin={{ vertical: "top", horizontal: "right" }}
-                >
-                  <MenuItem onClick={() => handleMenuSelect("/movies/popularTV")}>
-                    Popular TV
-                  </MenuItem>
-                  <MenuItem onClick={() => handleMenuSelect("/movies/favoritesShow")}>
-                    Favourite TV
-                  </MenuItem>
-                </Menu>
+                {isAuthenticated ? (
+                  [
+                    <MenuItem key="movies" onClick={handleOpenMovies}>Movies ▸</MenuItem>,
+                    <Menu
+                      key="movies-submenu"
+                      anchorEl={anchorElMovies}
+                      open={Boolean(anchorElMovies)}
+                      onClose={handleCloseAll}
+                      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                      transformOrigin={{ vertical: "top", horizontal: "right" }}
+                    >
+                      <MenuItem onClick={() => handleMenuSelect("/movies")}>All Movies</MenuItem>
+                      <MenuItem onClick={() => handleMenuSelect("/movies/favorites")}>Favorites</MenuItem>
+                      <MenuItem onClick={() => handleMenuSelect("/movies/upcoming")}>Upcoming</MenuItem>
+                      <MenuItem onClick={() => handleMenuSelect("/movies/popular")}>Popular</MenuItem>
+                      <MenuItem onClick={() => handleMenuSelect("/movies/nowPlaying")}>Now Playing</MenuItem>
+                    </Menu>,
+                    <MenuItem key="tv" onClick={handleOpenTV}>TV Shows ▸</MenuItem>,
+                    <Menu
+                      key="tv-submenu"
+                      anchorEl={anchorElTV}
+                      open={Boolean(anchorElTV)}
+                      onClose={handleCloseAll}
+                      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                      transformOrigin={{ vertical: "top", horizontal: "right" }}
+                    >
+                      <MenuItem onClick={() => handleMenuSelect("/movies/popularTV")}>Popular TV</MenuItem>
+                      <MenuItem onClick={() => handleMenuSelect("/movies/favoritesShow")}>Favourite TV</MenuItem>
+                    </Menu>,
+                    <MenuItem key="profile" onClick={() => handleMenuSelect("/profile")}>Profile</MenuItem>,
+                    <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
+                  ]
+                ) : (
+                  [
+                    <MenuItem key="login" onClick={() => handleMenuSelect("/login")}>Login</MenuItem>,
+                    <MenuItem key="signup" onClick={() => handleMenuSelect("/signup")}>Sign Up</MenuItem>
+                  ]
+                )}
               </Menu>
             </>
           ) : (
-            /* === DESKTOP MENU === */
             <>
-              <Button
-                color="inherit"
-                onClick={handleOpenMovies}
-                sx={{ fontWeight: "bold" }}
-              >
-                Movies
-              </Button>
-              <Menu
-                anchorEl={anchorElMovies}
-                open={Boolean(anchorElMovies)}
-                onClose={handleCloseAll}
-              >
-                <MenuItem onClick={() => handleMenuSelect("/")}>Home</MenuItem>
-                <MenuItem onClick={() => handleMenuSelect("/movies/favorites")}>
-                  Favorites
-                </MenuItem>
-                <MenuItem onClick={() => handleMenuSelect("/movies/upcoming")}>
-                  Upcoming Movies
-                </MenuItem>
-                <MenuItem onClick={() => handleMenuSelect("/movies/popular")}>
-                  Popular Movies
-                </MenuItem>
-                <MenuItem onClick={() => handleMenuSelect("/movies/nowPlaying")}>
-                  Now Playing
-                </MenuItem>
-              </Menu>
+              {isAuthenticated ? (
+                <>
+                  <Button
+                    color="inherit"
+                    onClick={handleOpenMovies}
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    Movies
+                  </Button>
+                  <Menu
+                    anchorEl={anchorElMovies}
+                    open={Boolean(anchorElMovies)}
+                    onClose={handleCloseAll}
+                  >
+                    <MenuItem onClick={() => handleMenuSelect("/movies")}>All Movies</MenuItem>
+                    <MenuItem onClick={() => handleMenuSelect("/movies/favorites")}>Favorites</MenuItem>
+                    <MenuItem onClick={() => handleMenuSelect("/movies/upcoming")}>Upcoming</MenuItem>
+                    <MenuItem onClick={() => handleMenuSelect("/movies/popular")}>Popular</MenuItem>
+                    <MenuItem onClick={() => handleMenuSelect("/movies/nowPlaying")}>Now Playing</MenuItem>
+                  </Menu>
 
-              <Button
-                color="inherit"
-                onClick={handleOpenTV}
-                sx={{ fontWeight: "bold" }}
-              >
-                TV Shows
-              </Button>
-              <Menu
-                anchorEl={anchorElTV}
-                open={Boolean(anchorElTV)}
-                onClose={handleCloseAll}
-              >
-                <MenuItem onClick={() => handleMenuSelect("/movies/popularTV")}>
-                  Popular TV
-                </MenuItem>
-                <MenuItem onClick={() => handleMenuSelect("/movies/favoritesShow")}>
-                  Favourite TV
-                </MenuItem>
-              </Menu>
+                  <Button
+                    color="inherit"
+                    onClick={handleOpenTV}
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    TV Shows
+                  </Button>
+                  <Menu
+                    anchorEl={anchorElTV}
+                    open={Boolean(anchorElTV)}
+                    onClose={handleCloseAll}
+                  >
+                    <MenuItem onClick={() => handleMenuSelect("/movies/popularTV")}>Popular TV</MenuItem>
+                    <MenuItem onClick={() => handleMenuSelect("/movies/favoritesShow")}>Favourite TV</MenuItem>
+                  </Menu>
+                  <Button color="inherit" onClick={() => navigate("/profile")}>
+                    Profile
+                  </Button>
+                  <Button color="inherit" onClick={handleLogout}>
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button color="inherit" onClick={() => navigate("/login")}>
+                    Login
+                  </Button>
+                  <Button color="inherit" onClick={() => navigate("/signup")}>
+                    Sign Up
+                  </Button>
+                </>
+              )}
             </>
           )}
         </Toolbar>
