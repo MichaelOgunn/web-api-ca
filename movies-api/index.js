@@ -7,6 +7,7 @@ import './db';
 import cors from 'cors';
 //... other imports
 import usersRouter from './api/users';
+import tvRouter from './api/tv';
 import authenticate from './authenticate';
 
 
@@ -33,12 +34,12 @@ app.use(express.json());
 
 app.use('/api/movies', moviesRouter); 
 
+app.use('/api/tv', tvRouter);
 
 //Users router
 app.use('/api/users', usersRouter);
 
 app.use(errHandler);
-
 
 
 

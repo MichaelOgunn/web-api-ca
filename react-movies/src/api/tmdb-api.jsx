@@ -15,13 +15,12 @@ export const getMovies = () => {
 };
 
 
+
 export const getMovie = (args) => {
-  //console.log(args)
   const [, idPart] = args.queryKey;
   const { id } = idPart;
   return fetch(
-    `https://api.themoviedb.org/3/movie/${id}?api_key=${import.meta.env.VITE_TMDB_KEY}`
-  ).then((response) => {
+  `http://localhost:8080/api/movies/${id}`).then((response) => {
     if (!response.ok) {
       return response.json().then((error) => {
         throw new Error(error.status_message || "Something went wrong");
@@ -29,15 +28,27 @@ export const getMovie = (args) => {
     }
     return response.json();
   })
-  .catch((error) => {
-    throw error
- });
-};
+}
+  export const getMovieImages = ({ queryKey }) => {
+    const [, idPart] = queryKey;
+    const { id } = idPart;
+    return fetch(
+      `http://localhost:8080/api/movies/${id}/images`
+    ).then((response) => {
+      if (!response.ok) {
+        return response.json().then((error) => {
+          throw new Error(error.status_message || "Something went wrong");
+        });
+      }
+      return response.json();
+    })    
+  };
+
 export const getTvShow = (args) => {
   const [, idPart] = args.queryKey;
   const { id } = idPart;
   return fetch(
-    `https://api.themoviedb.org/3/tv/${id}?api_key=${import.meta.env.VITE_TMDB_KEY}`
+    `http://localhost:8080/api/tv/${id}`
   ).then((response) => {
     if (!response.ok) {
       return response.json().then((error) => {
@@ -55,9 +66,7 @@ export const getTvShow = (args) => {
 
   export const getGenres = () => {
     return fetch(
-      "https://api.themoviedb.org/3/genre/movie/list?api_key=" +
-        import.meta.env.VITE_TMDB_KEY +
-        "&language=en-US"
+      `http://localhost:8080/api/movies/genres`
     ).then( (response) => {
       if (!response.ok) {
         return response.json().then((error) => {
@@ -72,23 +81,7 @@ export const getTvShow = (args) => {
   };
 
 
-   export const getMovieImages = ({ queryKey }) => {
-    const [, idPart] = queryKey;
-    const { id } = idPart;
-    return fetch(
-      `https://api.themoviedb.org/3/movie/${id}/images?api_key=${import.meta.env.VITE_TMDB_KEY}`
-    ).then( (response) => {
-      if (!response.ok) {
-        return response.json().then((error) => {
-          throw new Error(error.status_message || "Something went wrong");
-        });
-      }
-      return response.json();
-    })
-    .catch((error) => {
-      throw error
-   });
-  };
+ 
 
     export const getMovieReviews = ({ queryKey }) => {
     const [, idPart] = queryKey;
@@ -107,9 +100,9 @@ export const getTvShow = (args) => {
       throw error
    });
   };
- export const getUpcomingMovies = () => {
+export const getUpcomingMovies = () => {
     return fetch(
-      `https://api.themoviedb.org/3/movie/upcoming?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US&page=1`
+      `http://localhost:8080/api/movies/upcoming`
     ).then((response) => {
       if (!response.ok) {
         return response.json().then((error) => {
@@ -124,7 +117,7 @@ export const getTvShow = (args) => {
   };
 export const getPopularMovies = () => {
   return fetch(
-    `https://api.themoviedb.org/3/movie/popular?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US&page=1`
+    `http://localhost:8080/api/movies/popular`
   ).then((response) => {
     if (!response.ok) {
       return response.json().then((error) => {
@@ -140,7 +133,7 @@ export const getPopularMovies = () => {
 
 export const getNowPlayingMovies = () => {
   return fetch(
-    `https://api.themoviedb.org/3/movie/now_playing?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US&page=1`
+    `http://localhost:8080/api/movies/now_playing`
   ).then((response) => {
     if (!response.ok) {
       return response.json().then((error) => {
@@ -156,7 +149,7 @@ export const getNowPlayingMovies = () => {
 
 export const getPopularTV = () => {
   return fetch(
-    `https://api.themoviedb.org/3/tv/popular?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US&page=1`
+    `http://localhost:8080/api/tv/popular`
   ).then((response) => {
     if (!response.ok) {
       return response.json().then((error) => {

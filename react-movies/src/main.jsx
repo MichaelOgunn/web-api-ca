@@ -23,6 +23,7 @@ import AuthContextProvider from "./contexts/authContext";
 import WelcomePage from "./pages/welcomePage";
 import MoviesPage from "./pages/moviesPage";
 import ProfilePage from "./pages/profilePage";
+import PrivateRoute from "./components/privateRoute";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,8 +44,8 @@ const App = () => {
         <MoviesContextProvider>
           <ShowsContextProvider>
           <Routes>
-            <Route path="/movies/favorites" element={<FavoriteMoviesPage />} />
-            <Route path="/movies/favoritesShow" element={<FavoriteShowPage />} />
+            <Route path="/movies/favorites" element={<PrivateRoute><FavoriteMoviesPage /></PrivateRoute>} />
+            <Route path="/movies/favoritesShow" element={<PrivateRoute><FavoriteShowPage /></PrivateRoute>} />
 
             <Route path="/reviews/:id" element={<MovieReviewPage />} />
             <Route path="/movies/:id/:pageType/:reviewId?" element={<MovieDetailsExtensionPage />} />
@@ -58,7 +59,7 @@ const App = () => {
             <Route path="/home" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
 
             <Route path="/" element={<WelcomePage />} />
             <Route path="*" element={<Navigate to="/" />} />
