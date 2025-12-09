@@ -224,3 +224,43 @@ export const signup = async (username, password) => {
     });
     return response.json();
 };
+export const getFavourites = async () => {
+  const response = await fetch('http://localhost:8080/api/favourites');
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.status_message || "Failed to fetch favourites");
+  }
+  return response.json();
+};
+// Add a movie to favourites
+export const addFavourite = async (movieId) => {
+  const response = await fetch(
+    `http://localhost:8080/api/favourites/${movieId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.status_message || "Failed to add favourite");
+  }
+
+  return response.json();
+};
+export const removeFavourite = async (movieId) => {
+  const response = await fetch(`http://localhost:8080/api/favourites/${movieId}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok && response.status !== 204) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.status_message || "Failed to remove favourite");
+  }
+
+  // no body on 204, so just return true
+  return true;
+};

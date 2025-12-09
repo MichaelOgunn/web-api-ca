@@ -3,7 +3,7 @@ import {
   getMovies, getMovie, getMovieImages, getUpcomingMovies,getGenres, getPopularMovies, getNowPlayingMovies
 } from '../tmdb-api';
 import asyncHandler from 'express-async-handler';
-
+import FavoriteMovie from '../favourite/favmodel';
 const router = express.Router();
 router.get('/discover', asyncHandler(async (req, res) => {
     const discoverMovies = await getMovies();
@@ -50,6 +50,32 @@ router.get('/:id/images', asyncHandler(async (req, res) => {
   } else {
     res.status(404).json({ message: 'The resource you requested could not be found.', status_code: 404 });
   }
+}));
+router.get('/:id', asyncHandler(async (req, res) => {
+  const movieId = Number(req.params.id);
+  const movie = await getMovie(movieId);
+
+  if (!movie) {
+    return res.status(404).json({ 
+      message: 'The resource you requested could not be found.', 
+      status_code: 404 
+    });
+  }
+
+  let isFavorite = false;
+
+  if (req.user) {   // ✅ Only if user is logged in
+    const fav = await FavoriteMovie.findOne({
+      userId: req.user._id,
+      movieId,
+    });
+    isFavorite = !!fav;
+  }
+
+  res.status(200).json({
+    ...movie,
+    isFavorite,   // ✅ this is what your frontend uses
+  });
 }));
 
 

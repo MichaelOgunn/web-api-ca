@@ -9,6 +9,7 @@ import cors from 'cors';
 import usersRouter from './api/users';
 import tvRouter from './api/tv';
 import authenticate from './authenticate';
+import favouriteRouter from './api/favourite/index';
 
 
 
@@ -39,6 +40,7 @@ app.use('/api/tv', tvRouter);
 //Users router
 app.use('/api/users', usersRouter);
 
+app.use('/api/favourites', favouriteRouter);
 app.use(errHandler);
 
 
