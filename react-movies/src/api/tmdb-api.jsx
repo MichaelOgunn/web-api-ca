@@ -264,3 +264,30 @@ export const removeFavourite = async (movieId) => {
   // no body on 204, so just return true
   return true;
 };
+export const getTvFavourites = async () => {
+  const response = await fetch('http://localhost:8080/api/favourites/tv');
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.status_message || "Failed to fetch favourites");
+  }
+  return response.json();
+};
+// Add a TV show to favourites
+export const addTvFavourite = async (tvId) => {
+  const response = await fetch(
+    `http://localhost:8080/api/favourites/tv/${tvId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.status_message || "Failed to add favourite");
+  }
+
+  return response.json();
+};

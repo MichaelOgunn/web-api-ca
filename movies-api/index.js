@@ -10,6 +10,7 @@ import usersRouter from './api/users';
 import tvRouter from './api/tv';
 import authenticate from './authenticate';
 import favouriteRouter from './api/favourite/index';
+import favouriteRoutertv from './api/favourite/tv/index';
 
 
 
@@ -41,6 +42,7 @@ app.use('/api/tv', tvRouter);
 app.use('/api/users', usersRouter);
 
 app.use('/api/favourites', favouriteRouter);
+app.use('/api/favourites/tv', favouriteRoutertv);
 app.use(errHandler);
 
 
