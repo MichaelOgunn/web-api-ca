@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -7,21 +7,43 @@ import CardMedia from "@mui/material/CardMedia";
 import CardHeader from "@mui/material/CardHeader";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import CalendarIcon from "@mui/icons-material/CalendarTodayTwoTone";
 import StarRateIcon from "@mui/icons-material/StarRate";
 import Grid from "@mui/material/Grid";
-import img from '../../images/film-poster-placeholder.png';
+import Avatar from "@mui/material/Avatar";
+import img from "../../images/film-poster-placeholder.png";
+
+import { ShowsContext } from "../../contexts/showContext";
 
 export default function TVShowCard({ show, action }) {
+  const { favorites, addToFavorites } = useContext(ShowsContext);
+
+  // Same pattern as MovieCard
+  show.favorite = favorites.find((id) => id === show.id) ? true : false;
+
+  const handleAddToFavorite = (e) => {
+    e.preventDefault();
+    addToFavorites(show);
+  };
+
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card>
       <CardHeader
+        avatar={
+          show.favorite ? (
+            <Avatar sx={{ backgroundColor: "red" }}>
+              <FavoriteIcon />
+            </Avatar>
+          ) : null
+        }
         title={
           <Typography variant="h5" component="p">
             {show.name}{" "}
           </Typography>
         }
       />
+
       <CardMedia
         sx={{ height: 500 }}
         image={
@@ -30,15 +52,17 @@ export default function TVShowCard({ show, action }) {
             : img
         }
       />
+
       <CardContent>
         <Grid container>
-          <Grid item xs={6}>
+          <Grid size={{ xs: 6 }}>
             <Typography variant="h6" component="p">
               <CalendarIcon fontSize="small" />
               {show.first_air_date}
             </Typography>
           </Grid>
-          <Grid item xs={6}>
+
+          <Grid size={{ xs: 6 }}>
             <Typography variant="h6" component="p">
               <StarRateIcon fontSize="small" />
               {"  "} {show.vote_average}{" "}
@@ -46,9 +70,10 @@ export default function TVShowCard({ show, action }) {
           </Grid>
         </Grid>
       </CardContent>
+
       <CardActions disableSpacing>
-        {action && action(show)}
-        {/* Note: The link below assumes you will create a details page for TV shows at this path. */}
+        {action ? action(show, handleAddToFavorite) : null}
+
         <Link to={`/tv/${show.id}`}>
           <Button variant="outlined" size="medium" color="primary">
             More Info ...

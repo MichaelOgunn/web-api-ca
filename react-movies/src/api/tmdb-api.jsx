@@ -1,3 +1,4 @@
+
 export const getMovies = () => {
   return fetch(
     `http://localhost:8080/api/movies/discover`
@@ -224,70 +225,77 @@ export const signup = async (username, password) => {
     });
     return response.json();
 };
-export const getFavourites = async () => {
-  const response = await fetch('http://localhost:8080/api/favourites');
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.status_message || "Failed to fetch favourites");
-  }
-  return response.json();
-};
-// Add a movie to favourites
 export const addFavourite = async (movieId) => {
-  const response = await fetch(
-    `http://localhost:8080/api/favourites/${movieId}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.status_message || "Failed to add favourite");
-  }
-
-  return response.json();
-};
-export const removeFavourite = async (movieId) => {
   const response = await fetch(`http://localhost:8080/api/favourites/${movieId}`, {
-    method: 'DELETE',
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: window.localStorage.getItem("token"),
+    },
   });
 
-  if (!response.ok && response.status !== 204) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.status_message || "Failed to remove favourite");
-  }
+  if (!response.ok) throw new Error(await response.text());
+  return response.json();
+};
 
-  // no body on 204, so just return true
+export const getFavourites = async () => {
+  const response = await fetch("http://localhost:8080/api/favourites", {
+    headers: {
+      Authorization: window.localStorage.getItem("token"),
+    },
+  });
+
+  if (!response.ok) throw new Error(await response.text());
+  return response.json();
+};
+
+export const removeFavourite = async (movieId) => {
+  const response = await fetch(`http://localhost:8080/api/favourites/${movieId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: window.localStorage.getItem("token"),
+    },
+  });
+
+  if (!response.ok && response.status !== 204) throw new Error(await response.text());
   return true;
 };
+
+
 export const getTvFavourites = async () => {
-  const response = await fetch('http://localhost:8080/api/favourites/tv');
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.status_message || "Failed to fetch favourites");
-  }
+  const response = await fetch("http://localhost:8080/api/favourites/tv", {
+    headers: {
+      Authorization: window.localStorage.getItem("token"),
+    },
+  });
+
+  if (!response.ok) throw new Error(await response.text());
   return response.json();
 };
+
 // Add a TV show to favourites
 export const addTvFavourite = async (tvId) => {
-  const response = await fetch(
-    `http://localhost:8080/api/favourites/tv/${tvId}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  const response = await fetch(`http://localhost:8080/api/favourites/tv/${tvId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: window.localStorage.getItem("token"),
+    },
+  });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.status_message || "Failed to add favourite");
-  }
-
+  if (!response.ok) throw new Error(await response.text());
   return response.json();
+};
+
+// Remove a TV show from favourites
+export const removeTvFavourite = async (tvId) => {
+  const response = await fetch(`http://localhost:8080/api/favourites/tv/${tvId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: window.localStorage.getItem("token"),
+    },
+  });
+
+  if (!response.ok && response.status !== 204) throw new Error(await response.text());
+  return true;
 };

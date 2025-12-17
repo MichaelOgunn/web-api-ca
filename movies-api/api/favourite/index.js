@@ -9,7 +9,7 @@ const router = express.Router();
 router.get(
   '/',
   asyncHandler(async (req, res) => {
-    const favorites = await FavoriteMovie.find();
+    const favorites = await FavoriteMovie.find( {userId: req.user._id});
     res.status(200).json(favorites);
   })
 );
@@ -25,22 +25,21 @@ router.get(
 
 // Add a movie to favourites (no auth, global)
 router.post(
-  '/:movieId',
+  "/:movieId",
   asyncHandler(async (req, res) => {
     const movieId = Number(req.params.movieId);
     const movie = await getMovie(movieId);
 
-    // upsert so we don't get duplicates for the same movieId
     const favorite = await FavoriteMovie.findOneAndUpdate(
-      { movieId },
+      { userId: req.user._id, movieId },  
       {
+        userId: req.user._id,             
         movieId,
         title: movie.title,
         posterPath: movie.poster_path,
         releaseDate: movie.release_date,
-        // userId: null  // optional, since we're not using user yet
       },
-      { upsert: true, new: true }
+      { upsert: true, new: true, runValidators: true }
     );
 
     res.status(201).json(favorite);

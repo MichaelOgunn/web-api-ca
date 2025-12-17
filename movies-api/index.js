@@ -41,8 +41,8 @@ app.use('/api/tv', tvRouter);
 //Users router
 app.use('/api/users', usersRouter);
 
-app.use('/api/favourites', favouriteRouter);
-app.use('/api/favourites/tv', favouriteRoutertv);
+app.use('/api/favourites',authenticate, favouriteRouter);
+app.use('/api/favourites/tv',authenticate, favouriteRoutertv);
 app.use(errHandler);
 
 
