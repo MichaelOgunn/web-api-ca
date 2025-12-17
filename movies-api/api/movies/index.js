@@ -64,7 +64,7 @@ router.get('/:id', asyncHandler(async (req, res) => {
 
   let isFavorite = false;
 
-  if (req.user) {   // ✅ Only if user is logged in
+  if (req.user) {   // Only if user is logged in
     const fav = await FavoriteMovie.findOne({
       userId: req.user._id,
       movieId,
@@ -74,7 +74,7 @@ router.get('/:id', asyncHandler(async (req, res) => {
 
   res.status(200).json({
     ...movie,
-    isFavorite,   // ✅ this is what your frontend uses
+    isFavorite,   
   });
 }));
 

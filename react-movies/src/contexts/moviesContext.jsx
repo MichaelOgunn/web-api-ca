@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getFavourites, addFavourite, removeFavourite } from "../api/tmdb-api"; 
+import { getFavourites, addFavourite, removeFavourite,addWatchlist,getWatchlist } from "../api/tmdb-api"; 
 
 export const MoviesContext = React.createContext(null);
 
@@ -14,6 +14,8 @@ const MoviesContextProvider = (props) => {
       try {
         const favDocs = await getFavourites(); // [{ movieId, ... }]
         setFavorites(favDocs.map((f) => f.movieId));
+        const watchDocs = await getWatchlist();
+      setMustWatch(watchDocs.map((w) => w.movieId));
       } catch (err) {
         console.error("Error loading favourites:", err);
       }
@@ -56,10 +58,18 @@ const MoviesContextProvider = (props) => {
     setMyReviews({ ...myReviews, [movie.id]: review });
   };
 
-  const addToWatchlists = (movie) => {
-    if (!mustWatch.includes(movie.id)) {
-      setMustWatch([...mustWatch, movie.id]);
-    }
+  const addToWatchlists = async(movie) => {
+    if (mustWatch.includes(movie.id)) return;
+      setMustWatch((prev) => [...prev, movie.id] );
+      try {
+        await addWatchlist(movie.id);
+      
+      }catch (err) {
+        console.error("Error adding to watchlist:", err);
+        // rollback
+        setMustWatch((prev) => prev.filter((id) => id!== movie.id));
+      }
+    
   };
 
   const removeFromWatchlists = (movie) => {

@@ -299,3 +299,41 @@ export const removeTvFavourite = async (tvId) => {
   if (!response.ok && response.status !== 204) throw new Error(await response.text());
   return true;
 };
+// Add a movie to watchlist
+export const addWatchlist = async (movieId) => {
+  const response = await fetch(`http://localhost:8080/api/mustwatch/${movieId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: window.localStorage.getItem("token"),
+    },
+  });
+
+  if (!response.ok) throw new Error(await response.text());
+  return response.json();
+};
+
+// Remove a movie from watchlist
+export const removeWatchlist = async (movieId) => {
+  const response = await fetch(`http://localhost:8080/api/mustwatch/${movieId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: window.localStorage.getItem("token"),
+    },
+  });
+
+  if (!response.ok && response.status!== 204) throw new Error(await response.text());
+  return true;
+};
+
+// Get watchlist
+export const getWatchlist = async () => {
+  const response = await fetch("http://localhost:8080/api/mustwatch", {
+    headers: {
+      Authorization: window.localStorage.getItem("token"),
+    },
+  });
+
+  if (!response.ok) throw new Error(await response.text());
+  return response.json();
+};
