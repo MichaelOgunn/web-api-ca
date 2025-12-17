@@ -3,6 +3,9 @@ import {
   getTvFavourites,
   addTvFavourite,
   // removeTvFavourite,
+  getMustwatchTV,
+  addMustwatchTV,
+  // removeMustwatchTV,
 } from "../api/tmdb-api"; 
 
 export const ShowsContext = createContext();
@@ -16,6 +19,8 @@ const ShowsContextProvider = (props) => {
       try {
         const favDocs = await getTvFavourites(); // [{ tvId, name, ... }]
         setFavorites(favDocs.map((f) => f.tvId));
+        const mustWatchDocs = await getMustwatchTV(); // [{ tvId, name,... }]
+        setMustWatch(mustWatchDocs.map((m) => m.tvId));
       } catch (err) {
         console.error("Error loading TV favourites:", err);
       }
@@ -55,10 +60,17 @@ const ShowsContextProvider = (props) => {
   // };
 
   // Must-watch list stays purely client-side (like before)
-  const addToWatchlists = (show) => {
-    if (!mustWatch.includes(show.id)) {
+  const addToWatchlists = async(show) => {
+    if (mustWatch.includes(show.id)) return;
       setMustWatch((prev) => [...prev, show.id]);
-    }
+      try{
+        await addMustwatchTV(show.id);
+      }
+      catch(err){
+        console.error("Error adding TV to must-watch list:", err);
+        setMustWatch((prev) => prev.filter((id) => id!== show.id));
+      }
+    
   };
 
   return (

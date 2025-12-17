@@ -44,7 +44,6 @@ router.post(
       {
         userId: req.user._id,           
         tvId,
-        // add fields here if your schema has them (name, posterPath, etc.)
       },
       { upsert: true, new: true, runValidators: true }
     );

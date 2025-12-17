@@ -337,3 +337,29 @@ export const getWatchlist = async () => {
   if (!response.ok) throw new Error(await response.text());
   return response.json();
 };
+
+// Get mustwatch tv
+export const getMustwatchTV = async () => {
+  const response = await fetch("http://localhost:8080/api/mustwatch/tv", {
+    headers: {
+      Authorization: window.localStorage.getItem("token"),
+    },
+  });
+
+  if (!response.ok) throw new Error(await response.text());
+  return response.json();
+};
+
+// Add a TV show to mustwatch
+export const addMustwatchTV = async (tvId) => {
+  const response = await fetch(`http://localhost:8080/api/mustwatch/tv/${tvId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: window.localStorage.getItem("token"),
+    },
+  });
+
+  if (!response.ok) throw new Error(await response.text());
+  return response.json();
+};

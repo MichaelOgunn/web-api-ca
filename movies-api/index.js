@@ -12,7 +12,7 @@ import authenticate from './authenticate';
 import favouriteRouter from './api/favourite/index';
 import favouriteRoutertv from './api/favourite/tv/index';
 import mustWatchRouter from './api/mustWatch/index';
-
+import mustwatchRoutertv from './api/mustWatch/tv/index';
 
 dotenv.config();
 
@@ -44,6 +44,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/favourites',authenticate, favouriteRouter);
 app.use('/api/favourites/tv',authenticate, favouriteRoutertv);
 app.use('/api/mustwatch', authenticate, mustWatchRouter);
+app.use('/api/mustwatch/tv', authenticate, mustwatchRoutertv);
 app.use(errHandler);
 
 
