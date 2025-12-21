@@ -84,12 +84,11 @@ export const getTvShow = (args) => {
 
  
 
-    export const getMovieReviews = ({ queryKey }) => {
-    const [, idPart] = queryKey;
-    const { id } = idPart;
-    return fetch(
-      `https://api.themoviedb.org/3/movie/${id}/reviews?api_key=${import.meta.env.VITE_TMDB_KEY}`
-    ).then( (response) => {
+export const getMovieReviews = async ({ queryKey }) => {
+  const [, idPart] = queryKey;
+  const { id } = idPart;
+  return fetch(
+    `http://localhost:8080/api/movies/${id}/reviews`).then((response) => {
       if (!response.ok) {
         return response.json().then((error) => {
           throw new Error(error.status_message || "Something went wrong");
@@ -100,7 +99,7 @@ export const getTvShow = (args) => {
     .catch((error) => {
       throw error
    });
-  };
+};
 export const getUpcomingMovies = () => {
     return fetch(
       `http://localhost:8080/api/movies/upcoming`
@@ -168,8 +167,9 @@ export const getMovieCredits = ({ queryKey }) => {
   const { id } = idPart;
 
   return fetch(
-    `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${import.meta.env.VITE_TMDB_KEY}`
-  )
+    //local host
+    `http://localhost:8080/api/movies/${id}/credits`
+    )
     .then((response) => {
       if (!response.ok) {
         return response.json().then((error) => {
@@ -189,7 +189,8 @@ export const getSimilarMovies = ({ queryKey }) => {
   const { id } = idPart;
 
   return fetch(
-    `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${import.meta.env.VITE_TMDB_KEY}`
+    //local host  
+    `http://localhost:8080/api/movies/${id}/similar`
   )
     .then((response) => {
       if (!response.ok) {
@@ -362,4 +363,24 @@ export const addMustwatchTV = async (tvId) => {
 
   if (!response.ok) throw new Error(await response.text());
   return response.json();
+};
+export const getMyReviews = async () => {
+  const res = await fetch(`http://localhost:8080/api/reviews`, {
+    headers: { Authorization: localStorage.getItem("token") },
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+};
+
+export const addOrUpdateReview = async (movieId, data) => {
+  const res = await fetch(`http://localhost:8080/api/reviews/${movieId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
 };

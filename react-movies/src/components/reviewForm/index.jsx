@@ -92,13 +92,18 @@ const ReviewForm = ({ movie }) => {
   };
 
 
-   const onSubmit = (review) => {
-    review.movieId = movie.id;
-    review.rating = rating;
-    // console.log(review);
-    context.addReview(movie, review);
-    setOpen(true); // NEW
+   const onSubmit = async (formData) => {
+  const payload = {
+    author: formData.author,
+    review: formData.review,
+    rating: Number(rating),
+    movieId: movie.id,        
+    movieTitle: movie.title, 
   };
+
+  await context.addReview(movie, payload);  
+  setOpen(true);
+};
         <Snackbar
         sx={styles.snack}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}

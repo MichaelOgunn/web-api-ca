@@ -3,8 +3,6 @@ import fetch from 'node-fetch';
 
 
 
-
-
 export const getMovies = async () => {
     const response = await fetch(
         `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.TMDB_KEY}&language=en-US&include_adult=false&include_video=false&page=1`
@@ -92,6 +90,36 @@ export const getPopularTV = async () => {
 export const getTVShow = async (id) => {
     const response = await fetch(
         `https://api.themoviedb.org/3/tv/${id}?api_key=${process.env.TMDB_KEY}&language=en-US`
+    );
+    if (!response.ok) {
+        throw new Error(response.json().message);
+    }
+    return await response.json();
+};
+export const getMovieReviews = async (id) => {
+    const response = await fetch(
+        `https://api.themoviedb.org/3/movie/${id}/reviews?api_key=${process.env.TMDB_KEY}`
+    );
+    if (!response.ok) {
+        throw new Error(response.json().message);
+    }
+    return await response.json();
+};
+
+export const getSimilarMovies = async (id) => {
+    const response = await fetch(
+        `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${process.env.TMDB_KEY}`
+    );
+    if (!response.ok) {
+        throw new Error(response.json().message);
+    }
+    return await response.json();
+};
+
+
+export const getMovieCredits = async (id) => {
+    const response = await fetch(
+        `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.TMDB_KEY}&language=en-US`
     );
     if (!response.ok) {
         throw new Error(response.json().message);

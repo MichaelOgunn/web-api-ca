@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getFavourites, addFavourite, removeFavourite,addWatchlist,getWatchlist } from "../api/tmdb-api"; 
+import { getFavourites, addFavourite, removeFavourite,addWatchlist,getWatchlist,addOrUpdateReview,getMyReviews } from "../api/tmdb-api"; 
 
 export const MoviesContext = React.createContext(null);
 
@@ -27,37 +27,52 @@ const MoviesContextProvider = (props) => {
   const addToFavorites = async (movie) => {
     if (favorites.includes(movie.id)) return;
 
-    // optimistic update
+   
     setFavorites((prev) => [...prev, movie.id]);
 
     try {
       await addFavourite(movie.id);
     } catch (err) {
       console.error("Error adding favourite:", err);
-      // rollback
+      
       setFavorites((prev) => prev.filter((id) => id !== movie.id));
     }
   };
 
   const removeFromFavorites = async (movie) => {
-    // optimistic update
+  
     setFavorites((prev) => prev.filter((mId) => mId !== movie.id));
 
     try {
       await removeFavourite(movie.id);
     } catch (err) {
       console.error("Error removing favourite:", err);
-      // rollback: re-add if missing
+    
       setFavorites((prev) =>
         prev.includes(movie.id) ? prev : [...prev, movie.id]
       );
     }
   };
 
-  const addReview = (movie, review) => {
-    setMyReviews({ ...myReviews, [movie.id]: review });
-  };
+ const addReview = async (movie, payload) => {
+    const prev = myReviews[movie.id];
 
+    setMyReviews((curr) => ({ ...curr, [movie.id]: payload })); 
+
+    try {
+      const saved = await addOrUpdateReview(movie.id, payload);
+      setMyReviews((curr) => ({ ...curr, [movie.id]: saved }));
+    } catch (err) {
+      console.error("Error adding review:", err);
+      
+      setMyReviews((curr) => {
+        const copy = { ...curr };
+        if (prev) copy[movie.id] = prev;
+        else delete copy[movie.id];
+        return copy;
+      });
+    }
+  };
   const addToWatchlists = async(movie) => {
     if (mustWatch.includes(movie.id)) return;
       setMustWatch((prev) => [...prev, movie.id] );

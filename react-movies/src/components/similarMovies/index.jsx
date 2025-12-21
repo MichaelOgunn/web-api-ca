@@ -12,7 +12,7 @@ import { getSimilarMovies } from "../../api/tmdb-api";
 import Spinner from "../spinner";
 
 export default function SimilarMovies({ movie }) {
-  // 🧩 wait until movie.id exists before starting the query
+  // wait until movie.id exists before starting the query
   const isMovieReady = !!movie?.id;
 
   const { data, error, isPending, isError } = useQuery({
@@ -21,7 +21,7 @@ export default function SimilarMovies({ movie }) {
     enabled: isMovieReady, // prevents query until movie.id is ready
   });
 
-  // ⏳ while waiting for movie to load
+  // while waiting for movie to load
   if (!isMovieReady) return <Spinner />;
 
   if (isPending) return <Spinner />;

@@ -23,6 +23,7 @@ import AuthContextProvider from "./contexts/authContext";
 import WelcomePage from "./pages/welcomePage";
 import MoviesPage from "./pages/moviesPage";
 import ProfilePage from "./pages/profilePage";
+import MyReviewsPage from "./pages/myReviewsPage";
 import PrivateRoute from "./components/privateRoute";
 
 const queryClient = new QueryClient({
@@ -60,6 +61,9 @@ const App = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+            <Route path="/reviews/mine" element={<MyReviewsPage />} />
+
+
 
             <Route path="/" element={<WelcomePage />} />
             <Route path="*" element={<Navigate to="/" />} />

@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  getMovies, getMovie, getMovieImages, getUpcomingMovies,getGenres, getPopularMovies, getNowPlayingMovies
+  getMovies, getMovie, getMovieImages, getUpcomingMovies,getGenres, getPopularMovies, getNowPlayingMovies, getMovieReviews
 } from '../tmdb-api';
 import asyncHandler from 'express-async-handler';
 import FavoriteMovie from '../favourite/favmodel';
@@ -51,6 +51,8 @@ router.get('/:id/images', asyncHandler(async (req, res) => {
     res.status(404).json({ message: 'The resource you requested could not be found.', status_code: 404 });
   }
 }));
+/* This particular route handler is responsible for retrieving details of a specific movie based on the
+`id` parameter provided in the URL. Here's a breakdown of what it does: */
 router.get('/:id', asyncHandler(async (req, res) => {
   const movieId = Number(req.params.id);
   const movie = await getMovie(movieId);
@@ -77,6 +79,49 @@ router.get('/:id', asyncHandler(async (req, res) => {
     isFavorite,   
   });
 }));
-
+//get movie reviews
+router.get('/:id/reviews', asyncHandler(async (req, res) => {
+  const movieReviews = await getMovieReviews(req.params.id);
+  if (movieReviews) {
+    res.status(200).json(movieReviews);
+  } else {
+    res.status(404).json({
+      message: 'The resource you requested could not be found.',
+      status_code: 404
+    });
+  }
+}));
+//similar movies
+router.get('/:id/similar', asyncHandler(async (req, res) => {
+  const similarMovies = await getMovies({
+    with_similar_movies: req.params.id,
+    page: 1,
+    language: 'en-US'
+  });
+  if (similarMovies) {
+    res.status(200).json(similarMovies);
+  } else {
+    res.status(404).json({
+      message: 'The resource you requested could not be found.',
+      status_code: 404
+    });
+  }
+}));
+//Credit
+router.get('/:id/credits', asyncHandler(async (req, res) => {
+  const movieCredits = await getMovies({
+    with_cast: req.params.id,
+    page: 1,
+    language: 'en-US'
+  });
+  if (movieCredits) {
+    res.status(200).json(movieCredits);
+  } else {
+    res.status(404).json({
+      message: 'The resource you requested could not be found.',
+      status_code: 404
+    });
+  }
+}));
 
 export default router;
